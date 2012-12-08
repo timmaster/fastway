@@ -1,0 +1,29 @@
+<% 	/*
+	model = {
+		selectionType: "",
+		items: [{
+			id: "",
+			name: ""
+		}]
+	};
+	*/
+%>
+
+<ul class="select list <%= selectionType %>">
+	<% for (var i = 0, len = items.length; i < len; i++) { %>
+		<li class="selector" data-itemid="<%= items[i].id %>">
+			<a href="#">
+				<%= items[i].name %>
+			</a>
+		</li>
+	<% } %>
+</ul>
+<div class="selection list selection-type-<%= selectionType %>">
+	<% for (var i = 0, len = items.length; i < len; i++) { %>
+		<div class="selection item-<%= items[i].id %>"
+			data-itemid="<%= items[i].id %>"
+			data-itemindex="<%= i %>">
+			<h3><%= items[i].name %></h3>
+		</div>
+	<% } %>
+</div>

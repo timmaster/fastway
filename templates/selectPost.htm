@@ -1,0 +1,18 @@
+﻿<% /*
+	model = app.Models.Post
+   */
+%>
+<div class="select-item post id-<%= id %>" data-itemid="<%= id %>">
+    <% if (!!thumbnail) { %>
+        <img class="thumbnail" src="<%= thumbnail %>" />
+    <% } %>
+    <span class="message">
+        "<%= message %>"
+    </span>
+    <span class="from">
+        Posted by <%= user.name %>
+    </span>
+    <span class="other-info">
+        type: <%= fb_type %>
+    </span>
+</div>

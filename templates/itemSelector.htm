@@ -1,0 +1,8 @@
+﻿
+<ul>
+    <% for (var i = 0, len = items.length; i < len; i++) { %>
+        <li>
+            <%= new EJS({ url: "templates/select" + items[i].type }).render(items[i]) %>
+        </li>
+    <% } %>
+</ul>
