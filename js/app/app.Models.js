@@ -149,6 +149,7 @@ app.Models.Photo = (function () {
         this.width = params.width;
         this.height = params.height;
         this.caption = params.caption;
+        this.user = !!params.user ? app.Models.getModel(params.user) : null; // app.Models.User
     }
 
     Photo.prototype.toObject = function () {
@@ -160,7 +161,8 @@ app.Models.Photo = (function () {
             source: this.source,
             width: this.width,
             height: this.height,
-            caption: this.caption
+            caption: this.caption,
+            user: !!this.user ? this.user.toObject() : null
         };
     };
 
@@ -183,6 +185,7 @@ app.Models.Album = (function () {
         this.name = params.name;
         this.coverPhotoId = params.coverPhotoId;
         this.photos = !!params.photos ? app.Models.getModelArray(params.photos) : []; // List of app.Models.Photo
+        this.coverPhoto = !!params.coverPhoto ? app.Models.getModel(params.coverPhoto) : null; // app.Models.Photo
     }
 
     Album.prototype.toObject = function () {

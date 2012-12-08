@@ -1,22 +1,19 @@
 ﻿<% /*
-	model = app.Models.Post
+	model = app.Models.Photo
    */
 %>
-<div class="select-item post id-<%= id %>" data-itemid="<%= id %>">
+<div class="select-item photo id-<%= id %>" data-itemid="<%= id %>">
     <% if (!!thumbnail) { %>
         <div class="image-container">
             <img class="thumbnail" src="<%= thumbnail %>" />
         </div>
     <% } %>
     <span class="info">
-        <span class="message">
-            "<%= message %>"
+        <span class="caption">
+            "<%= caption %>"
         </span>
         <span class="user">
             Posted by <%= user.name %>
-        </span>
-        <span class="other-info">
-            type: <%= fb_type %>
         </span>
     </span>
 </div>

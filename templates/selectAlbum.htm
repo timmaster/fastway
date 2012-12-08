@@ -1,0 +1,14 @@
+﻿<% /*
+	model = app.Models.Photo
+   */
+%>
+<div class="select-item album id-<%= id %>" data-itemid="<%= id %>">
+  <div class="image-container">
+    <img class="thumbnail" src="<%= !!coverPhoto ? coverPhoto.thumbnail : app.Settings.emptyPhoto %>" />
+  </div>
+  <span class="info">
+    <span class="name">
+      <%= name %>
+    </span>
+  </span>
+</div>

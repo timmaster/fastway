@@ -1,352 +1,492 @@
 <html>
 <head>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.2/underscore-min.js" type="text/javascript"></script>
-	<script src="//code.jquery.com/jquery.min.js" type="text/javascript"></script>
-	<script src="js/libs/ejs.js" type="text/javascript"></script>
-    <script src="js/app/app.js" type="text/javascript"></script>
-    <script src="js/app/app.Settings.js" type="text/javascript"></script>
-    <script src="js/app/app.Models.js" type="text/javascript"></script>
-    <script src="js/app/app.FacebookMapper.js" type="text/javascript"></script>
-    <script src="js/app/app.Repository.js" type="text/javascript"></script>
+  <link href='http://fonts.googleapis.com/css?family=Mouse+Memoirs' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Anaheim' rel='stylesheet' type='text/css'>
 
-	<script>
-		"use strict";
+  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.2/underscore-min.js" type="text/javascript"></script>
+  <script src="//code.jquery.com/jquery.min.js" type="text/javascript"></script>
+  <script src="js/libs/ejs.js" type="text/javascript"></script>
+  <script src="js/app/app.js" type="text/javascript"></script>
+  <script src="js/app/app.Settings.js" type="text/javascript"></script>
+  <script src="js/app/app.Models.js" type="text/javascript"></script>
+  <script src="js/app/app.FacebookMapper.js" type="text/javascript"></script>
+  <script src="js/app/app.Repository.js" type="text/javascript"></script>
 
-		app.FB = (function () {
-		    "use strict";
+  <script>
+    "use strict";
 
-		    var _p = {
-		        //authResponse: null,
-		        photos: null,
-		        albums: null
-		    };
+    app.FB = (function () {
+      "use strict";
 
-		    var getPrivateData = function () {
-		        return _p;
-		    };
+      var _p = {
+        //authResponse: null,
+        photos: null,
+        albums: null
+      };
 
-		    //			var login = function() {
-		    //				FB.login(function(response) {
-		    //					if (response.authResponse) {
-		    //						// connected
-		    //						_p.authResponse = response.authResponse;
-		    //						updateLoggedInUI();
-		    //						app.debug("loginConnectedResponse", response);
-		    //					} else {
-		    //						// cancelled
-		    //						app.log("Facebook login cancelled.");
-		    //						app.debug("loginCancelledResponse", response);
-		    //					}
-		    //				}, {
-		    //					scope: "user_about_me,user_activities,user_interests,user_photos,user_status,read_stream"
-		    //				});
-		    //			};
+      var getPrivateData = function () {
+        return _p;
+      };
 
-		    var updateLoggedInUI = function (authResponse) {
-		        FB.api('/me', function (response) {
-		            app.debug("getUserDataResponse", response);
+      //			var login = function() {
+      //				FB.login(function(response) {
+      //					if (response.authResponse) {
+      //						// connected
+      //						_p.authResponse = response.authResponse;
+      //						updateLoggedInUI();
+      //						app.debug("loginConnectedResponse", response);
+      //					} else {
+      //						// cancelled
+      //						app.log("Facebook login cancelled.");
+      //						app.debug("loginCancelledResponse", response);
+      //					}
+      //				}, {
+      //					scope: "user_about_me,user_activities,user_interests,user_photos,user_status,read_stream"
+      //				});
+      //			};
 
-		            var loggedInMessage = $("#loggedInUI p");
-		            var message = loggedInMessage.html()
-						.replace("$name", response.name);
+      var updateLoggedInUI = function (authResponse) {
+        FB.api('/me', function (response) {
+          app.debug("getUserDataResponse", response);
 
-		            loggedInMessage.html(message);
+          var loggedInMessage = $("#loggedInUI p");
+          var message = loggedInMessage.html()
+  .replace("$name", response.name);
 
-		            $("#loginUI").addClass("hidden");
-		            $("#loggedInUI").removeClass("hidden");
-		        });
-		    };
+          loggedInMessage.html(message);
 
-		    var loadQuery = function (queryType, callback) {
-		        FB.api('/me/' + queryType + "?access_token=" + _p.authResponse.accessToken, function (response) {
-		            app.debug(queryType, response);
-		            callback(response);
-		        });
-		    };
+          $("#loginUI").addClass("hidden");
+          $("#loggedInUI").removeClass("hidden");
+        });
+      };
 
-		    var loadPhotos = function (fb_photos, $contentSection) {
-		        var photos = [];
+      var loadQuery = function (queryType, callback) {
+        FB.api('/me/' + queryType + "?access_token=" + _p.authResponse.accessToken, function (response) {
+          app.debug(queryType, response);
+          callback(response);
+        });
+      };
 
-		        _.each(fb_photos, function (fbo) {
-		            var url = fbo.source; // TODO: Get the appropriate size.
+      var loadPhotos = function (fb_photos, $contentSection) {
+        var photos = [];
 
-		            photos.push({
-		                fb_data: fbo,
-		                url: url,
-		                from: fbo.from.name,
-		                name: fbo.name
-		            });
-		        });
+        _.each(fb_photos, function (fbo) {
+          var url = fbo.source; // TODO: Get the appropriate size.
 
-		        _p.photos = photos;
+          photos.push({
+            fb_data: fbo,
+            url: url,
+            from: fbo.from.name,
+            name: fbo.name
+          });
+        });
 
-		        // Create an empty list.
-		        var listHtml = new EJS({ url: 'templates/photolist.htm' }).render({ photos: photos });
-		        $contentSection.html(listHtml);
-		        var $listItems = $("li", $contentSection);
+        _p.photos = photos;
 
-		        _.each(photos, function (o, i) {
-		            var itemHtml = new EJS({ url: 'templates/photo.htm' }).render(o);
-		            $listItems.eq(i).html(itemHtml);
+        // Create an empty list.
+        var listHtml = new EJS({ url: 'templates/photolist.htm' }).render({ photos: photos });
+        $contentSection.html(listHtml);
+        var $listItems = $("li", $contentSection);
 
-		            // TODO: fetch related data (such as from profile image) and update _p.photos & UI.
-		        });
-		    };
+        _.each(photos, function (o, i) {
+          var itemHtml = new EJS({ url: 'templates/photo.htm' }).render(o);
+          $listItems.eq(i).html(itemHtml);
 
-		    var loadAlbums = function (fb_albums, $contentSection) {
-		        var albums = [];
+          // TODO: fetch related data (such as from profile image) and update _p.photos & UI.
+        });
+      };
 
-		        _.each(fb_albums, function (fbo) {
-		            albums.push({
-		                fb_data: fbo,
-		                id: fbo.id,
-		                name: fbo.name
-		            });
-		        });
+      var loadAlbums = function (fb_albums, $contentSection) {
+        var albums = [];
 
-		        _p.albums = albums;
+        _.each(fb_albums, function (fbo) {
+          albums.push({
+            fb_data: fbo,
+            id: fbo.id,
+            name: fbo.name
+          });
+        });
 
-		        var selectorHtml = new EJS({ url: 'templates/selector.htm' }).render({
-		            selectionType: "albums",
-		            items: albums
-		        });
+        _p.albums = albums;
 
-		        $contentSection.html(selectorHtml);
-		        wireupSelector("albums", function ($selectionContainer) {
-		            var id = $selectionContainer.data("itemid");
-		            var index = $selectionContainer.data("itemindex");
+        var selectorHtml = new EJS({ url: 'templates/selector.htm' }).render({
+          selectionType: "albums",
+          items: albums
+        });
+
+        $contentSection.html(selectorHtml);
+        wireupSelector("albums", function ($selectionContainer) {
+          var id = $selectionContainer.data("itemid");
+          var index = $selectionContainer.data("itemindex");
 
 
 
-		            // TODO: Refactor, since this is the same as loadPhotos?
-		            // Create an empty list.
-		            var photos = [];
-		            var album = _.find(_p.albums, function (album) {
-		                return album.id == id;
-		            });
+          // TODO: Refactor, since this is the same as loadPhotos?
+          // Create an empty list.
+          var photos = [];
+          var album = _.find(_p.albums, function (album) {
+            return album.id == id;
+          });
 
-		            if (!!album) {
-		                FB.api("/" + id + "/photos?access_token=" + _p.authResponse.accessToken, function (response) {
-		                    app.debug("album_" + id, response);
+          if (!!album) {
+            FB.api("/" + id + "/photos?access_token=" + _p.authResponse.accessToken, function (response) {
+              app.debug("album_" + id, response);
 
-		                    if (!!response.data) {
-		                        loadPhotos(response.data, $selectionContainer);
-		                    }
-		                });
-		            }
-		        });
-		    };
+              if (!!response.data) {
+                loadPhotos(response.data, $selectionContainer);
+              }
+            });
+          }
+        });
+      };
 
-		    var loadAlbum = function (fb_album, index, $contentSection) {
+      var loadAlbum = function (fb_album, index, $contentSection) {
 
-		    };
+      };
 
-		    var wireupSelector = function (selectionType, callback) {
-		        var $selectionList = $(".selection.list.selection-type-" + selectionType);
+      var wireupSelector = function (selectionType, callback) {
+        var $selectionList = $(".selection.list.selection-type-" + selectionType);
 
-		        $(".select.list." + selectionType + " .selector").each(function (i, o) {
-		            var $selector = $(o);
-		            var id = $selector.data("itemid");
-		            $("a", $selector).click(function (e) {
-		                e.preventDefault();
-		                $(".selection", $selectionList).hide();
-		                var $selectionContainer = $(".selection.item-" + id, $selectionList);
-		                $selectionContainer.show();
-		                callback($selectionContainer);
-		            });
-		        });
-		    };
+        $(".select.list." + selectionType + " .selector").each(function (i, o) {
+          var $selector = $(o);
+          var id = $selector.data("itemid");
+          $("a", $selector).click(function (e) {
+            e.preventDefault();
+            $(".selection", $selectionList).hide();
+            var $selectionContainer = $(".selection.item-" + id, $selectionList);
+            $selectionContainer.show();
+            callback($selectionContainer);
+          });
+        });
+      };
 
-		    var init = function () {
-		        $("#loginCommand").click(function (e) {
-		            e.preventDefault();
-		            app.Repository.login(app.Models.Providers.Facebook);
-		        });
+      var sizeSelectItemContent = function ($item) {
+        var padding = 0.10;
 
-		        $(".query-section").each(function (i, o) {
-		            var $section = $(o);
-		            $(".load-query", $section).click(function (e) {
-		                e.preventDefault();
-		                var queryType = $section.data("query");
+        var imgHeight = 0;
+        var infoHeight = 0;
+        var $img = $(".image-container", $item);
+        var $info = $(".info", $item);        
 
-		                if (queryType == "home") {
-		                    app.Repository.getFeed(app.Models.Providers.Facebook, function (result) {
-		                        _.each(result, function (o) {
-		                            app.log(o.toObject());
-		                        });
+        if ($img.length > 0) {
+          infoHeight = $item.height() - $img.height();          
+          infoHeight -= (padding * $item.width());
+          $info.height(infoHeight);
+        }
+      };
 
-		                        var html = new EJS({ url: "templates/itemSelector.htm" }).render({ items: result });
-		                        var $contentSection = $(".content", $section);
+      var init = function () {
+        $("#loginCommand").click(function (e) {
+          e.preventDefault();
+          app.Repository.login(app.Models.Providers.Facebook);
+        });
 
-		                        $contentSection.html(html);
+        $(".query-section").each(function (i, o) {
+          var $section = $(o);
+          $(".load-query", $section).click(function (e) {
+            e.preventDefault();
+            var queryType = $section.data("query");
 
-		                        // Debugging:
-		                        if (app.Settings.debugging) {
-		                            $(".select-item.post", $contentSection).click(function (e) {
-		                                var id = $(this).data("itemid");
-		                                var fbItem = _.find(app.debugData.home.data, function (o) {
-		                                    return (o.id == id);
-		                                });
+            if (queryType == "home") {
+              app.Repository.getFeed(app.Models.Providers.Facebook, function (result) {
+                var html = new EJS({ url: "templates/itemSelector.htm" }).render({ items: result });
+                var $contentSection = $(".content", $section);
 
-		                                app.log(!!fbItem ? fbItem : "Could not find item id = " + id);
-		                            });
-		                        }
-		                    });
-		                } else {
-		                    loadQuery(queryType, function (response) {
-		                        var $contentSection = $(".content", $section);
+                $contentSection.html(html);
 
-		                        if (!response.error) {
-		                            if (queryType === "photos")
-		                                loadPhotos(response.data, $contentSection);
-		                            else if (queryType === "albums")
-		                                loadAlbums(response.data, $contentSection);
-		                            else
-		                                $contentSection.html(JSON.stringify(response.data));
-		                        } else {
-		                            $contentSection.html(response.error.message);
-		                        }
+                $(".select-item", $contentSection).each(function (i, o) {
+                  sizeSelectItemContent($(o));
+                });
 
-		                        app.log(!!response.data ? JSON.stringify(response.data) : response.error.message);
-		                    });
-		                }
-		            });
-		        });
-		    };
+                // Debugging:
+                if (app.Settings.debugging) {
+                  _.each(result, function (o) {
+                    app.log(o.toObject());
+                  });
 
-		    return {
-		        init: init,
-		        updateLoggedInUI: updateLoggedInUI,
-		        getPrivateData: getPrivateData,
+                  $(".select-item.post", $contentSection).click(function (e) {
+                    var id = $(this).data("itemid");
+                    var fbItem = _.find(app.debugData.home.data, function (o) {
+                      return (o.id == id);
+                    });
 
-		        __: null
-		    };
-		})();
-		
-	</script>
-	<script>
-		$(document).ready(function(){
-			app.FB.init();
-		});
-	</script>
-	<style type="text/css">
-		.hidden {
-			display: none;		
-		}
-		.query-section {
-			float: left;
-			clear: both;
-		}
-		.photo.list .photo {
-			float: left;
-			width: 200px;
-			height: 300px;
-			margin-right: 30px;			
-		}
-		.photo.list .photo > * {
-			width: 100%;
-			float: left;
-			clear: both;
-		}
-		.photo.list .photo .image-container {
-			height: 200px;
-			position: relative;
-		}
-		.photo.list .photo img {
-			max-width: 100%;
-			max-height: 100%;			
-			position: absolute;
-			bottom: 0;
-		}
-		
-		.selection.list .selection {
-			display: none;
-		}
-		
-	</style>
+                    app.log(!!fbItem ? fbItem : "Could not find item id = " + id);
+                  });
+                }
+              });
+            } else if (queryType == "albums") {
+              app.Repository.getAlbums(app.Models.Providers.Facebook, function (result) {
+                // Debugging:
+                if (app.Settings.debugging) {
+                  _.each(result, function (o) {
+                    app.log(o.toObject());
+                  });
+                }
+
+                var html = new EJS({ url: "templates/itemSelector.htm" }).render({ items: result });
+                var $contentSection = $(".content", $section);
+
+                $contentSection.html(html);
+
+                _.each(result, function (o) {
+                  app.Repository.getPhoto(app.Models.Providers.Facebook, o.coverPhotoId, function (photoResult) {
+                    app.log(o.id);
+                    var $item = $(".select-item.id-" + o.id);
+
+                    $item.find(".thumbnail")
+                      .load(function () {
+                        sizeSelectItemContent($item);
+                      })
+                      .attr("src", photoResult.thumbnail);
+                  });
+                });
+              });
+            } else if (queryType == "photos") {
+              app.Repository.getPhotos(app.Models.Providers.Facebook, function (result) {
+                // Debugging:
+                if (app.Settings.debugging) {
+                  _.each(result, function (o) {
+                    app.log(o.toObject());
+                  });
+                }
+
+                var html = new EJS({ url: "templates/itemSelector.htm" }).render({ items: result });
+                var $contentSection = $(".content", $section);
+
+                $contentSection.html(html);
+
+                $(".select-item", $contentSection).each(function (i, o) {
+                  sizeSelectItemContent($(o));
+                });
+              });
+            } else {
+              loadQuery(queryType, function (response) {
+                var $contentSection = $(".content", $section);
+
+                if (!response.error) {
+                  if (queryType === "photos")
+                    loadPhotos(response.data, $contentSection);
+                  else if (queryType === "albums")
+                    loadAlbums(response.data, $contentSection);
+                  else
+                    $contentSection.html(JSON.stringify(response.data));
+                } else {
+                  $contentSection.html(response.error.message);
+                }
+
+                app.log(!!response.data ? JSON.stringify(response.data) : response.error.message);
+              });
+            }
+          });
+        });
+      };
+
+      return {
+        init: init,
+        updateLoggedInUI: updateLoggedInUI,
+        getPrivateData: getPrivateData,
+
+        __: null
+      };
+    })();
+
+  </script>
+  <script>
+    $(document).ready(function () {
+      app.FB.init();
+    });
+  </script>
+  <style type="text/css">
+    .hidden {
+      display: none;
+    }
+
+    .query-section {
+      float: left;
+      clear: both;
+    }
+
+    .photo.list .photo {
+      float: left;
+      width: 200px;
+      height: 300px;
+      margin-right: 30px;
+    }
+
+      .photo.list .photo > * {
+        width: 100%;
+        float: left;
+        clear: both;
+      }
+
+      .photo.list .photo .image-container {
+        height: 200px;
+        position: relative;
+      }
+
+      .photo.list .photo img {
+        max-width: 100%;
+        max-height: 100%;
+        position: absolute;
+        bottom: 0;
+      }
+
+    .selection.list .selection {
+      display: none;
+    }
+
+
+    /* REAL CSS */
+    body {
+      font: 14px 'Anaheim', sans-serif;
+    }
+
+    li {
+      list-style-type: none;
+      float: left;
+    }
+
+    .select-item {
+      float: left;
+      position: relative;
+      width: 200px;
+      height: 250px;
+      margin: 0 30px 30px 0;
+      outline: 1px solid #ccc;
+      overflow: hidden;
+    }
+
+      .select-item.post {
+        height: 300px;
+      }
+
+      .select-item > *,
+      .select-item .info > * {
+        width: 90%;
+        padding: 5%;
+        float: left;
+        clear: both;
+      }
+
+      .select-item .info > * {
+        padding: 0;
+        width: 100%;
+      }
+
+      /*
+            .select-item .image-container {
+                width: 100%;
+                height: 170px;
+                position: relative;
+                padding: 0;
+            }
+            */
+
+      .select-item .image-container {
+        height: auto;
+        width: 100%;
+        max-height: 200px;
+        overflow: hidden;
+        position: relative;
+        padding: 0;
+      }
+
+        .select-item .image-container img {
+          width: 100%;
+          max-height: 100%;
+          position: relative;
+          bottom: 0;
+        }
+
+      .select-item .info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+  </style>
 </head>
 <body>
-	<div id="fb-root"></div>
-	<script>
-			
-		// Additional JS functions here
-	    window.fbAsyncInit = function () {
-	        FB.init({
-	            appId: '326861190754942', // App ID
-	            channelUrl: '//tsl.dyndns.org/channel.html', // Channel File
-	            status: true, // check login status
-	            cookie: true, // enable cookies to allow the server to access the session
-	            xfbml: true  // parse XFBML
-	        });
+  <div id="fb-root"></div>
+  <script>
 
-	        // Additional init code here
-	        FB.getLoginStatus(function (response) {
-	            app.log("FB.getLoginStatus: " + response.status);
-	            if (response.status === 'connected') {
-	                // connected
-	                app.Repository.setAuthInfo(app.Models.Providers.Facebook, response.authResponse);
-	                app.debug("getLoginStatusResponse", response);
-	                app.FB.updateLoggedInUI(response.authResponse);
-	            } else if (response.status === 'not_authorized') {
-	                // not_authorized
-	                $("#loginUI").removeClass("hidden");
-	            } else {
-	                // not_logged_in
-	                $("#loginUI").removeClass("hidden");
-	            }
-	        });
-	    };
+    // Additional JS functions here
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: '326861190754942', // App ID
+        channelUrl: '//tsl.dyndns.org/channel.html', // Channel File
+        status: true, // check login status
+        cookie: true, // enable cookies to allow the server to access the session
+        xfbml: true  // parse XFBML
+      });
 
-	  // Load the SDK Asynchronously
-		(function(d){
-			 var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-			 if (d.getElementById(id)) {return;}
-			 js = d.createElement('script'); js.id = id; js.async = true;
-			 js.src = "//connect.facebook.net/en_US/all.js";
-			 ref.parentNode.insertBefore(js, ref);
-		}(document));
-	   
-	</script>
+      // Additional init code here
+      FB.getLoginStatus(function (response) {
+        app.log("FB.getLoginStatus: " + response.status);
+        if (response.status === 'connected') {
+          // connected
+          app.Repository.setAuthInfo(app.Models.Providers.Facebook, response.authResponse);
+          app.debug("getLoginStatusResponse", response);
+          app.FB.updateLoggedInUI(response.authResponse);
+        } else if (response.status === 'not_authorized') {
+          // not_authorized
+          $("#loginUI").removeClass("hidden");
+        } else {
+          // not_logged_in
+          $("#loginUI").removeClass("hidden");
+        }
+      });
+    };
 
-	<div>
-		<div id="loginUI" class="hidden">
-			<a id="loginCommand" href="#">Login with Facebook</a>		
-		</div>
-		
-		<div id="loggedInUI" class="hidden">
-			<p>You're logged in as $name.</p>
-			<div id="likes" class="query-section" data-query="likes">
-				<h2>Likes</h2>
-				<div class="content">
-					<a href="#" class="load-query">Load</a>
-				</div>
-			</div>
-			<div id="friends" class="query-section" data-query="friends">
-				<h2>Friends</h2>
-				<div class="content">
-					<a href="#" class="load-query">Load</a>
-				</div>
-			</div>
-			<div id="albums" class="query-section" data-query="albums">
-				<h2>Albums</h2>
-				<div class="content">
-					<a href="#" class="load-query">Load</a>
-				</div>
-			</div>
-			<div id="photos" class="query-section" data-query="photos">
-				<h2>Photos</h2>
-				<div class="content">
-					<a href="#" class="load-query">Load</a>
-				</div>
-			</div>
-			<div id="feed" class="query-section" data-query="home">
-				<h2>Feed</h2>
-				<div class="content">
-					<a href="#" class="load-query">Load</a>
-				</div>
-			</div>
-		</div>
-	</div>
+    // Load the SDK Asynchronously
+    (function (d) {
+      var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+      if (d.getElementById(id)) { return; }
+      js = d.createElement('script'); js.id = id; js.async = true;
+      js.src = "//connect.facebook.net/en_US/all.js";
+      ref.parentNode.insertBefore(js, ref);
+    }(document));
+
+  </script>
+
+  <div>
+    <div id="loginUI" class="hidden">
+      <a id="loginCommand" href="#">Login with Facebook</a>
+    </div>
+
+    <div id="loggedInUI" class="hidden">
+      <p>You're logged in as $name.</p>
+      <div id="likes" class="query-section" data-query="likes">
+        <h2>Likes</h2>
+        <div class="content">
+          <a href="#" class="load-query">Load</a>
+        </div>
+      </div>
+      <div id="friends" class="query-section" data-query="friends">
+        <h2>Friends</h2>
+        <div class="content">
+          <a href="#" class="load-query">Load</a>
+        </div>
+      </div>
+      <div id="albums" class="query-section" data-query="albums">
+        <h2>Albums</h2>
+        <div class="content">
+          <a href="#" class="load-query">Load</a>
+        </div>
+      </div>
+      <div id="photos" class="query-section" data-query="photos">
+        <h2>Photos</h2>
+        <div class="content">
+          <a href="#" class="load-query">Load</a>
+        </div>
+      </div>
+      <div id="feed" class="query-section" data-query="home">
+        <h2>Feed</h2>
+        <div class="content">
+          <a href="#" class="load-query">Load</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>

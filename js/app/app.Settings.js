@@ -9,5 +9,7 @@ app.Settings = {
     debugging: true,
     cache: app.CacheTypes.none,
 
+    emptyPhoto: "images/empty-photo.jpg",
+
     __: null
 };

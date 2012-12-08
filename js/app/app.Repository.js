@@ -5,6 +5,10 @@
 */
 
 app.Repository = (function () {
+    var Constants = {
+        pageSize: 100
+    };
+
     var _p = {
         authInfo: {
             //app.Models.Providers.Facebook: app.Models.AuthInfo
@@ -57,7 +61,7 @@ app.Repository = (function () {
 
     };
 
-    var getFeed = function (provider, callback, paging, forceGet) {
+    var getFeed = function (provider, callback) {
         // TODO: Paging
         // TODO: Cache?
 
@@ -72,9 +76,63 @@ app.Repository = (function () {
             callback(result);
         };
 
-        if (provider == app.Models.Providers.Facebook) {
-            FB.api("/me/home/?access_token=" + _p.authInfo[provider].accessToken + "&limit=50", function (response) {
+        if (provider === app.Models.Providers.Facebook) {
+            FB.api("/me/home/?access_token=" + _p.authInfo[provider].accessToken + "&limit=" + Constants.pageSize, function (response) {
                 app.debug("home", response);
+                handleResponse(response.data);
+            });
+        }
+    };
+
+    var getAlbums = function (provider, callback) {
+        var handleResponse = function (list) {
+            var result = [];
+
+            _.each(list, function (o) {
+                var item = _p.mappers[provider].getAlbum(o);
+                result.push(item);
+            });
+
+            callback(result);
+        };
+
+        if (provider === app.Models.Providers.Facebook) {
+            FB.api("/me/albums/?access_token=" + _p.authInfo[provider].accessToken + "&limit=" + Constants.pageSize, function (response) {
+                app.debug("albums", response);
+                handleResponse(response.data);
+            });
+        }
+    };
+
+    var getPhoto = function (provider, id, callback) {
+        var handleResponse = function (item) {
+            var result = _p.mappers[provider].getPhoto(item);
+            callback(result);
+        };
+
+        if (provider === app.Models.Providers.Facebook) {
+            FB.api("/" + id + "/?access_token=" + _p.authInfo[provider].accessToken, function (response) {
+                app.debug("photo_" + id, response);
+                handleResponse(response);
+            });
+        }
+    };
+
+    var getPhotos = function (provider, callback) {
+        var handleResponse = function (list) {
+            var result = [];
+
+            _.each(list, function (o) {
+                var item = _p.mappers[provider].getPhoto(o);
+                result.push(item);
+            });
+
+            callback(result);
+        };
+
+        if (provider === app.Models.Providers.Facebook) {
+            FB.api("/me/photos/?access_token=" + _p.authInfo[provider].accessToken + "&limit=" + Constants.pageSize, function (response) {
+                app.debug("photos", response);
                 handleResponse(response.data);
             });
         }
@@ -86,6 +144,11 @@ app.Repository = (function () {
         init: init,
         login: login,
         setAuthInfo: setAuthInfo,
-        getFeed: getFeed
+        getFeed: getFeed,
+        getAlbums: getAlbums,
+        getPhoto: getPhoto,
+        getPhotos: getPhotos,
+
+        __end: null
     };
 })();
